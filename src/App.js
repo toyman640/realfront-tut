@@ -15,7 +15,7 @@ function App() {
           <Route exact path="/home-page" element={<Home />} />
         </Routes>
       </BrowserRouter>
-      
+
     </div>
   );
 }
