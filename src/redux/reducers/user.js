@@ -1,12 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { createUser } from "../actions/signup";
+import { createSlice } from '@reduxjs/toolkit';
+import { createUser } from '../actions/signup';
 
 const initialState = {
   user: [],
 };
 
 const userSlice = createSlice({
-  name: "user",
+  name: 'user',
   initialState,
   extraReducers: (builder) => {
     builder
