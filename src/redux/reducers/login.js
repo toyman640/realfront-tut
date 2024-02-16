@@ -1,9 +1,31 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { logUser } from '../actions/login';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+// import { logUser } from '../actions/login';
+
+const LOGIN_USER_URL = 'http://127.0.0.1:3000/api/v1/login';
 
 const initialState = {
-  loggedUser: [],
+  loggedUser: null,
+  error: null,
+  loading: false,
 };
+
+export const logUser = createAsyncThunk('user/loginUser', async (userInfo) => {
+  try {
+    const response = await axios.post(LOGIN_USER_URL, userInfo, {
+      withCredentials: true,
+      headers:
+      {
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log('success', response.data);
+    return response.data;
+  } catch (err) {
+    console.log('error', err);
+    return err.message;
+  }
+});
 
 const loginSlice = createSlice({
   name: 'loggedUser',
@@ -18,13 +40,13 @@ const loginSlice = createSlice({
       .addCase(logUser.fulfilled, (state, action) => ({
         ...state,
         loading: false,
-        user: action.payload,
+        loggedUser: action.payload,
         error: null,
       }))
       .addCase(logUser.rejected, (state, action) => ({
         ...state,
         loading: false,
-        error: action.error.message,
+        error: action.error.response.error,
       }));
   },
 });

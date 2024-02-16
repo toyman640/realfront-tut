@@ -3,7 +3,9 @@ import { useDispatch } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { logUser } from '../redux/actions/login';
+// import { logUser } from '../redux/actions/login';
+import { logUser } from '../redux/reducers/login';
+// import { logUserIn } from '../redux/reducers/login';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -16,18 +18,30 @@ const Login = () => {
     const username = form.username.value;
     const password = form.password.value;
 
-    const userDetails = {
+    const userInfo = {
       username,
       password,
     };
 
-    dispatch(logUser(userDetails)).then((success) => {
-      if (success) {
+    try {
+      const response = await dispatch(logUser(userInfo));
+      if (response.payload && response.payload.user.data.attributes) {
+        // Successful login, navigate to the home page
         navigate('/home-page');
       } else {
-        setLoginError('Login details incorrect');
+        setLoginError('Could not authenticate your account');
       }
-    });
+    } catch (error) {
+      // Handle login error
+      const response = await dispatch(logUser(userInfo));
+      if (response.payload && response.payload.status === 401) {
+        setLoginError('Could not authenticate your account');
+      } else if (error.message && error.message.error) {
+        setLoginError(error.message.error);
+      } else {
+        setLoginError('An error occurred. Please try again.'); // Generic error message
+      }
+    }
   };
 
   return (
@@ -37,7 +51,7 @@ const Login = () => {
       <Form onSubmit={handleLogin}>
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Username</Form.Label>
-          <Form.Control type="text" name="username" placeholder="Enter email" />
+          <Form.Control type="text" name="username" placeholder="Enter Username" />
         </Form.Group>
         <Form.Group className="mb-3" controlId="formBasicPassword">
           <Form.Label>Password</Form.Label>
