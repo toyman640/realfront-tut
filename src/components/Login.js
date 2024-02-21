@@ -4,7 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 // import { logUser } from '../redux/actions/login';
-import { logUser } from '../redux/reducers/login';
+import { logUser, loggedIn } from '../redux/reducers/login';
 // import { logUserIn } from '../redux/reducers/login';
 
 const Login = () => {
@@ -25,18 +25,17 @@ const Login = () => {
 
     try {
       const response = await dispatch(logUser(userInfo));
+      console.log('Login response:', response);
       if (response.payload && response.payload.user.data.attributes) {
         // Successful login, navigate to the home page
+        await dispatch(loggedIn());
         navigate('/home-page');
       } else {
         setLoginError('Could not authenticate your account');
       }
     } catch (error) {
       // Handle login error
-      const response = await dispatch(logUser(userInfo));
-      if (response.payload && response.payload.status === 401) {
-        setLoginError('Could not authenticate your account');
-      } else if (error.message && error.message.error) {
+      if (error.message && error.message.error) {
         setLoginError(error.message.error);
       } else {
         setLoginError('An error occurred. Please try again.');

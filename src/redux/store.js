@@ -6,7 +6,7 @@ import loggedinReducer from './reducers/logged';
 
 const persistConfig = {
   key: 'login',
-  timeout: 100,
+  timeout: 200,
   version: 1,
   storage,
 };

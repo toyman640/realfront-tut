@@ -30,7 +30,7 @@ export const loggedIn = createAsyncThunk('user/loggedInUser', async () => {
   }
 });
 
-export const logUser = createAsyncThunk('user/loginUser', async (userInfo) => {
+export const logUser = createAsyncThunk('user/loginUser', async (userInfo, { dispatch }) => {
   try {
     const response = await axios.post(LOGIN_USER_URL, userInfo, {
       withCredentials: true,
@@ -40,15 +40,15 @@ export const logUser = createAsyncThunk('user/loginUser', async (userInfo) => {
     });
 
     // If login is successful, dispatch the loggedIn action
-    // if (response.data && response.data.user.data.attributes) {
-    //   const loggedInResponse = await dispatch(loggedIn());
+    if (response.data && response.data.user.data.attributes) {
+      const loggedInResponse = await dispatch(loggedIn());
 
-    //   // Return the data from loggedIn along with the logUser response
-    //   return {
-    //     logUserResponse: response.data,
-    //     loggedInResponse: loggedInResponse.payload,
-    //   };
-    // }
+      // Return the data from loggedIn along with the logUser response
+      return {
+        logUserResponse: response.data,
+        loggedInResponse: loggedInResponse.payload,
+      };
+    }
 
     return response.data;
   } catch (err) {
