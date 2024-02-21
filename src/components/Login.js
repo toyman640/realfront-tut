@@ -39,7 +39,7 @@ const Login = () => {
       } else if (error.message && error.message.error) {
         setLoginError(error.message.error);
       } else {
-        setLoginError('An error occurred. Please try again.'); // Generic error message
+        setLoginError('An error occurred. Please try again.');
       }
     }
   };
